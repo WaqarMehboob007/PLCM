@@ -275,11 +275,9 @@ class MaintenanceLogRead(MaintenanceLogBase):
     class Config:
         orm_mode = True
 
-class MaintenanmodelceLogUpdate(SQLModel): 
-    enmodeltity_id: Option  update_forward_refs  modelal[int] = update_forward_refsNone
-  mod  eupdate_forward_refsl  performed_by:update_forward_refsmodel Optional update_forward_refs[intmodel] = Noneupdate_forward_refs
-    notemode lupdate_forward_refss: Optional[supdate_forward_refstr] =model None
- update_forward_refs   next_d   ue: Opupdate_forward_refstionamodell[datetime] = Noneupdate_forward_refs
-    
-model
-# End ofupdate_forward_refs schemmodel    update_forward_refsas
+class MaintenanceLogUpdate(SQLModel):
+    entity_id: Optional[int] = None
+    performed_by: Optional[int] = None
+    notes: Optional[str] = None
+    next_due: Optional[datetime] = None
+
