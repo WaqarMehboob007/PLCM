@@ -1,0 +1,285 @@
+from typing import Optional, List
+from datetime import datetime
+from sqlmodel import SQLModel
+from app.models.base import (
+    UserBase,
+    CustomerBase,
+    StatusBase,
+    OrderBase,
+    ProjectBase,
+    SystemBase,
+    SubsystemBase,
+    ModuleBase,
+    UnitBase,
+    ComponentBase,
+    InventoryBase,
+    EntityBase,
+    EntityStatusHistoryBase,
+    MaintenanceLogBase,
+    UserCommon,
+    ProjectCommon,
+    CustomerCommon,
+    StatusCommon,
+    OrderCommon,
+    SystemCommon,
+    SubsystemCommon,
+    ModuleCommon,
+    UnitCommon,
+    ComponentCommon,
+    InventoryCommon,
+    EntityCommon,
+    EntityStatusHistoryCommon,
+    MaintenanceLogCommon,
+)
+
+# ---- User ----
+
+class UserCreate(UserBase):
+    pass
+
+class UserRead(UserBase):
+    id: int
+    projects: Optional[List["ProjectRead"]] = None
+
+    class Config:
+        orm_mode = True
+
+class UserUpdate(SQLModel):
+    username: Optional[str] = None
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    is_active: Optional[bool] = None
+
+# ---- Customer ----
+class CustomerCreate(CustomerBase):
+    pass
+
+class CustomerRead(CustomerBase):
+    id: int
+    orders: Optional[List["OrderRead"]] = None
+    class Config:
+        orm_mode = True
+
+class CustomerUpdate(SQLModel):
+    name: Optional[str] = None
+    contact_info: Optional[str] = None
+
+# ---- Status ----
+class StatusCreate(StatusBase):
+    pass
+
+class StatusRead(StatusBase):
+    id: int
+    class Config:
+        orm_mode = True
+
+class StatusUpdate(SQLModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+
+# ---- Order ----
+class OrderCreate(OrderBase):
+    pass
+
+class OrderRead(OrderBase):
+    id: int
+    status_id: Optional[int] = None
+    customer_id: int
+    projects: Optional[List["ProjectRead"]] = None
+
+    class Config:
+        orm_mode = True
+
+class OrderUpdate(SQLModel):
+    customer_id: Optional[int] = None
+    order_number: Optional[str] = None
+    status_id: Optional[int] = None
+
+# ---- Project ----
+class ProjectCreate(ProjectBase):
+    pass
+
+class ProjectRead(ProjectBase):
+    id: int
+    order_id: Optional[int] = None
+    status_id: Optional[int] = None
+    systems: Optional[List["SystemRead"]] = None
+    class Config:
+        orm_mode = True
+
+class ProjectUpdate(SQLModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    owner_id: Optional[int] = None
+    order_id: Optional[int] = None
+    status_id: Optional[int] = None
+
+# ---- System / Subsystem / Module / Unit / Component ----
+class SystemCreate(SystemBase):
+    pass
+
+class SystemRead(SystemBase):
+    id: int
+    project_id: int
+    status_id: Optional[int] = None
+    subsystems: Optional[List["SubsystemRead"]] = None
+
+    class Config:
+        orm_mode = True
+
+class SystemUpdate(SQLModel):
+    project_id: Optional[int] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    status_id: Optional[int] = None
+
+class SubsystemCreate(SubsystemBase):
+    pass
+
+class SubsystemRead(SubsystemBase):
+    id: int
+    system_id: int
+    status_id: Optional[int] = None
+    modules: Optional[List["ModuleRead"]] = None
+
+    class Config:
+        orm_mode = True
+
+class SubsystemUpdate(SQLModel):
+    system_id: Optional[int] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    status_id: Optional[int] = None
+
+class ModuleCreate(ModuleBase):
+    pass
+
+class ModuleRead(ModuleBase):
+    id: int
+    subsystem_id: int
+    status_id: Optional[int] = None
+    units: Optional[List["UnitRead"]] = None
+
+    class Config:
+        orm_mode = True
+
+class ModuleUpdate(SQLModel):
+    subsystem_id: Optional[int] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    status_id: Optional[int] = None
+
+class UnitCreate(UnitBase):
+    pass
+
+class UnitRead(UnitBase):
+    id: int
+    module_id: int
+    status_id: Optional[int] = None
+    components: Optional[List["ComponentRead"]] = None
+
+    class Config:
+        orm_mode = True
+
+class UnitUpdate(SQLModel):
+    module_id: Optional[int] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    status_id: Optional[int] = None
+
+class ComponentCreate(ComponentBase):
+    pass
+
+class ComponentRead(ComponentBase):
+    id: int
+    unit_id: int
+    status_id: Optional[int] = None
+    inventory_items: Optional[List["InventoryRead"]] = None
+
+    class Config:
+        orm_mode = True
+
+class ComponentUpdate(SQLModel):
+    unit_id: Optional[int] = None
+    name: Optional[str] = None
+    sku: Optional[str] = None
+    description: Optional[str] = None
+    status_id: Optional[int] = None
+
+# ---- Inventory ----
+class InventoryCreate(InventoryBase):
+    pass
+
+class InventoryRead(InventoryBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+class InventoryUpdate(SQLModel):
+    component_id: Optional[int] = None
+    quantity: Optional[int] = None
+    location: Optional[str] = None
+
+# ---- Entity / History / Maintenance ----
+class EntityCreate(EntityBase):
+    pass
+
+class EntityRead(EntityBase):
+    id: int
+    status_id: Optional[int] = None
+    status_history: Optional[List["EntityStatusHistoryRead"]] = None
+    maintenance_logs: Optional[List["MaintenanceLogRead"]] = None
+    class Config:
+        orm_mode = True
+
+class EntityUpdate(SQLModel):
+    entity_type: Optional[str] = None
+    entity_pk: Optional[int] = None
+    display_name: Optional[str] = None
+    status_id: Optional[int] = None
+
+class EntityStatusHistoryCreate(EntityStatusHistoryBase):
+    pass
+
+class EntityStatusHistoryRead(EntityStatusHistoryBase):
+    id: int
+    entity_id: int
+    status_id: int
+    changed_by: Optional[int] = None
+    changed_by_user: Optional[UserRead] = None
+
+    class Config:
+        orm_mode = True
+
+class EntityStatusHistoryUpdate(SQLModel):
+    entity_id: Optional[int] = None
+    status_id: Optional[int] = None
+    changed_by: Optional[int] = None
+    notes: Optional[str] = None
+
+class MaintenanceLogCreate(MaintenanceLogBase):
+    pass
+
+class MaintenanceLogRead(MaintenanceLogBase):
+    id: int
+    entity_id: int
+    performed_by: Optional[int] = None
+    notes: Optional[str] = None
+    performed_at: datetime
+    next_due: Optional[datetime] = None
+    performed_by_user: Optional[UserRead] = None
+
+    class Config:
+        orm_mode = True
+
+class MaintenanmodelceLogUpdate(SQLModel): 
+    enmodeltity_id: Option  update_forward_refs  modelal[int] = update_forward_refsNone
+  mod  eupdate_forward_refsl  performed_by:update_forward_refsmodel Optional update_forward_refs[intmodel] = Noneupdate_forward_refs
+    notemode lupdate_forward_refss: Optional[supdate_forward_refstr] =model None
+ update_forward_refs   next_d   ue: Opupdate_forward_refstionamodell[datetime] = Noneupdate_forward_refs
+    
+model
+# End ofupdate_forward_refs schemmodel    update_forward_refsas
