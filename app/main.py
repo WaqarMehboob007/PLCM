@@ -1,15 +1,25 @@
 from fastapi import FastAPI
-from sqlmodel import SQLModel
-from .database import engine
+from .database import init_db, close_db
+from contextlib import asynccontextmanager
+from app.routers import router
 
-app = FastAPI(title="PLM System")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db() 
+    try:
+        yield
+    finally:
+        # shutdown
+        close_db()
+    yield
 
-
-@app.on_event("startup")
-def on_startup():
-    SQLModel.metadata.create_all(engine)
-
+app: FastAPI = FastAPI(title="PLCM System", lifespan=lifespan)
+app.include_router(router, prefix="/api")
 
 @app.get("/")
 def root():
     return {"message": "PLM FastAPI running"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", reload=True)

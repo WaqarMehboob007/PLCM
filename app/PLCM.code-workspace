@@ -3,5 +3,12 @@
 		{
 			"path": ".."
 		}
-	]
+	],
+	"settings": {
+		"workbench.colorCustomizations": {
+			"editor.background": "#020202"
+		},
+		"editor.fontSize": 14,
+		"editor.fontLigatures": false
+	}
 }

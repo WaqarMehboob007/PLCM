@@ -1,0 +1,63 @@
+from typing import List
+from fastapi import APIRouter, HTTPException, Depends
+from sqlmodel import Session, select
+from app.database import get_session
+from app.models.tables import (Entity)
+from app.schemas import schemas
+
+router = APIRouter()
+
+# ===================== ENTITY ENDPOINTS =====================
+@router.post("/entities/", response_model=schemas.EntityRead, tags=["entities"])
+def create_entity(entity: schemas.EntityCreate, session: Session = Depends(get_session)):
+    db_entity = Entity(**entity.dict())
+    session.add(db_entity)
+    session.commit()
+    session.refresh(db_entity)
+    return db_entity
+
+@router.get("/entities/", response_model=List[schemas.EntityRead], tags=["entities"])
+def list_entities(skip: int = 0, limit: int = 100, session: Session = Depends(get_session)):
+    return session.exec(select(Entity).offset(skip).limit(limit)).all()
+
+@router.get("/entities/{entity_id}/", response_model=schemas.EntityRead, tags=["entities"])
+def get_entity(entity_id: int, session: Session = Depends(get_session)):
+    entity = session.get(Entity, entity_id)
+    if not entity:
+        raise HTTPException(status_code=404, detail="Entity not found")
+    return entity
+
+@router.put("/entities/{entity_id}/", response_model=schemas.EntityRead, tags=["entities"])
+def update_entity(entity_id: int, entity: schemas.EntityUpdate, session: Session = Depends(get_session)):
+    db_entity = session.get(Entity, entity_id)
+    if not db_entity:
+        raise HTTPException(status_code=404, detail="Entity not found")
+    for k, v in entity.dict(exclude_unset=True).items():
+        setattr(db_entity, k, v)
+    session.add(db_entity)
+    session.commit()
+    session.refresh(db_entity)
+    return db_entity
+
+@router.delete("/entities/{entity_id}/", tags=["entities"])
+def delete_entity(entity_id: int, session: Session = Depends(get_session)):
+    entity = session.get(Entity, entity_id)
+    if not entity:
+        raise HTTPException(status_code=404, detail="Entity not found")
+    session.delete(entity)
+    session.commit()
+    return {"ok": True}
+
+@router.get("/entities/{entity_id}/status-history/", response_model=List[schemas.EntityStatusHistoryRead], tags=["entities"])
+def list_entity_status_history(entity_id: int, session: Session = Depends(get_session)):
+    entity = session.get(Entity, entity_id)
+    if not entity:
+        raise HTTPException(status_code=404, detail="Entity not found")
+    return entity.status_history
+
+@router.get("/entities/{entity_id}/maintenance-logs/", response_model=List[schemas.MaintenanceLogRead], tags=["entities"])
+def list_entity_maintenance_logs(entity_id: int, session: Session = Depends(get_session)):
+    entity = session.get(Entity, entity_id)
+    if not entity:
+        raise HTTPException(status_code=404, detail="Entity not found")
+    return entity.maintenance_logs

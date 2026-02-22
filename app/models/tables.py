@@ -1,7 +1,6 @@
 from .base import *
 from typing import List, Optional
-from datetime import datetime
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import Field, Relationship
 
 
 class User(UserBase, table=True):

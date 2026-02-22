@@ -176,7 +176,7 @@ class UnitCreate(UnitBase):
 
 class UnitRead(UnitBase):
     id: int
-    module_id: int
+    module_id: Optional[int] = None
     status_id: Optional[int] = None
     components: Optional[List["ComponentRead"]] = None
 
@@ -194,7 +194,7 @@ class ComponentCreate(ComponentBase):
 
 class ComponentRead(ComponentBase):
     id: int
-    unit_id: int
+    unit_id: Optional[int] = None
     status_id: Optional[int] = None
     inventory_items: Optional[List["InventoryRead"]] = None
 
@@ -246,8 +246,8 @@ class EntityStatusHistoryCreate(EntityStatusHistoryBase):
 
 class EntityStatusHistoryRead(EntityStatusHistoryBase):
     id: int
-    entity_id: int
-    status_id: int
+    entity_id: Optional[int] = None
+    status_id: Optional[int] = None
     changed_by: Optional[int] = None
     changed_by_user: Optional[UserRead] = None
 
@@ -265,10 +265,10 @@ class MaintenanceLogCreate(MaintenanceLogBase):
 
 class MaintenanceLogRead(MaintenanceLogBase):
     id: int
-    entity_id: int
+    entity_id: Optional[int] = None
     performed_by: Optional[int] = None
     notes: Optional[str] = None
-    performed_at: datetime
+    performed_at: Optional[datetime] = None
     next_due: Optional[datetime] = None
     performed_by_user: Optional[UserRead] = None
 
