@@ -1,38 +1,36 @@
 from fastapi import APIRouter
+from importlib import import_module
 
 # Create a main router that will include all sub-routers
 router = APIRouter()
 
-# Import and include all routers
-from app.routers import (
-    _1_users,
-    _2_customers,
-    _3_orders,
-    _4_projects,
-    _5_systems,
-    _6_subsystem,
-    _7_module,
-    _8_unit,
-    _9_component,
-    _10_inventory,
-    entity,
-    entitystatushistory,
-    maintenanceLog,
-    status,
-)
+# Import numbered modules using importlib (they have numeric prefixes)
+users = import_module('._1_users', package='app.routers')
+customers = import_module('._2_customers', package='app.routers')
+orders = import_module('._3_orders', package='app.routers')
+projects = import_module('._4_projects', package='app.routers')
+systems = import_module('._5_systems', package='app.routers')
+subsystem = import_module('._6_subsystem', package='app.routers')
+module = import_module('._7_module', package='app.routers')
+unit = import_module('._8_unit', package='app.routers')
+component = import_module('._9_component', package='app.routers')
+inventory = import_module('._10_inventory', package='app.routers')
+
+# Import regular named modules using relative imports
+from . import entity, entitystatushistory, maintenanceLog, status
 
 # Include all routers
-router.include_router(_1_users.router, prefix="/users", tags=["users"])
-router.include_router(_2_customers.router, prefix="/customers", tags=["customers"])
-router.include_router(_3_orders.router, prefix="/orders", tags=["orders"])
-router.include_router(_4_projects.router, prefix="/projects", tags=["projects"])
-router.include_router(_5_systems.router, prefix="/systems", tags=["systems"])
-router.include_router(_6_subsystem.router, prefix="/subsystems", tags=["subsystems"]    )
-router.include_router(_7_module.router, prefix="/modules", tags=["modules"])
-router.include_router(_8_unit.router, prefix="/units", tags=["units"])
-router.include_router(_9_component.router, prefix="/components", tags=["components"])
-router.include_router(_10_inventory.router, prefix="/inventory", tags=["inventory"])
-router.include_router(entity.router, prefix="/entities", tags=["entities"])
-router.include_router(entitystatushistory.router, prefix="/entitystatushistory", tags=["entitystatushistory"])
-router.include_router(maintenanceLog.router, prefix="/maintenancelogs", tags=["maintenancelogs"])
-router.include_router(status.router, prefix="/statuses", tags=["statuses"])
+router.include_router(users.router)
+router.include_router(customers.router)
+router.include_router(orders.router)
+router.include_router(projects.router)
+router.include_router(systems.router)
+router.include_router(subsystem.router)
+router.include_router(module.router)
+router.include_router(unit.router)
+router.include_router(component.router)
+router.include_router(inventory.router)
+router.include_router(entity.router)
+router.include_router(entitystatushistory.router)
+router.include_router(maintenanceLog.router)
+router.include_router(status.router)

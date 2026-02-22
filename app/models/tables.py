@@ -28,6 +28,7 @@ class Project(ProjectBase, table=True):
     order_id: Optional[int] = Field(default=None, foreign_key="order.id")
     status_id: Optional[int] = Field(default=None, foreign_key="status.id")
     owner_id: Optional[int] = Field(default=None, foreign_key="user.id")
+    owner: Optional["User"] = Relationship(back_populates="projects")
     order: Optional[Order] = Relationship(back_populates="projects")
     systems: List["System"] = Relationship(back_populates="project")
 
