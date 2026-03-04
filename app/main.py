@@ -1,11 +1,16 @@
 from fastapi import FastAPI
-from .database import init_db, close_db
+from .database import init_db, close_db, engine
+from sqlmodel import Session
 from contextlib import asynccontextmanager
 from app.routers import router
+from app.auth import initialize_roles_and_permissions
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_db() 
+    init_db()
+    # Initialize default roles and permissions
+    with Session(engine) as session:
+        initialize_roles_and_permissions(session)
     try:
         yield
     finally:

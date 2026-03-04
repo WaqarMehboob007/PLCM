@@ -2,12 +2,29 @@ from .base import *
 from typing import List, Optional
 from sqlmodel import Field, Relationship
 
+class UserRole(SQLModel, table=True):
+    user_id: Optional[int] = Field(default=None, foreign_key="user.id", primary_key=True)
+    role_id: Optional[int] = Field(default=None, foreign_key="role.id", primary_key=True)
 
 class User(UserBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+    roles: List["Role"] = Relationship(back_populates="users", link_model=UserRole)
     projects: List["Project"] = Relationship(back_populates="owner")
     status_changes: List["EntityStatusHistory"] = Relationship(back_populates="changed_by_user")
     maintenances: List["MaintenanceLog"] = Relationship(back_populates="performed_by_user")
+
+class RolePermission(SQLModel, table=True):
+    role_id: Optional[int] = Field(default=None, foreign_key="role.id", primary_key=True)
+    permission_id: Optional[int] = Field(default=None, foreign_key="permission.id", primary_key=True)
+class Role(RoleBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    permissions: List["Permission"] = Relationship(back_populates="roles", link_model=RolePermission)
+    users: List["User"] = Relationship(back_populates="roles", link_model=UserRole)
+
+class Permission(PermissionBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    roles: List["Role"] = Relationship(back_populates="permissions", link_model=RolePermission)
+
 
 
 class Customer(CustomerBase, table=True):
@@ -105,3 +122,14 @@ class Inventory(InventoryBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     component_id: int = Field(foreign_key="component.id")
     component: Optional[Component] = Relationship(back_populates="inventory_items")
+
+
+
+# ===== AUTHENTICATION & AUTHORIZATION TABLES =====
+
+
+
+
+
+
+

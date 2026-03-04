@@ -281,3 +281,66 @@ class MaintenanceLogUpdate(SQLModel):
     notes: Optional[str] = None
     next_due: Optional[datetime] = None
 
+
+
+# ---- Authentication & Authorization ----
+
+class PermissionRead(SQLModel):
+    id: int
+    name: str
+    description: Optional[str] = None
+    
+    class Config:
+        orm_mode = True
+
+
+class RoleCreate(SQLModel):
+    name: str
+    description: Optional[str] = None
+
+
+class RoleRead(SQLModel):
+    id: int
+    name: str
+    description: Optional[str] = None
+    permissions: Optional[List[PermissionRead]] = None
+    
+    class Config:
+        orm_mode = True
+
+
+class RoleUpdate(SQLModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+
+
+class TokenResponse(SQLModel):
+    access_token: str
+    token_type: str
+    user_id: int
+    username: str
+    email: Optional[str] = None
+    roles: List[str] = []
+    permissions: List[str] = []
+
+
+class LoginRequest(SQLModel):
+    username: str
+    password: str
+
+
+class ChangePasswordRequest(SQLModel):
+    old_password: str
+    new_password: str
+
+
+class AssignRoleRequest(SQLModel):
+    user_id: int
+    role_id: int
+
+
+class UserReadWithRoles(UserRead):
+    roles: Optional[List[RoleRead]] = None
+    
+    class Config:
+        orm_mode = True

@@ -2,7 +2,6 @@ from typing import Optional
 from datetime import datetime
 from sqlmodel import SQLModel, Field
 
-
 # Base models for all entities, defining common fields and structure
 
 # All Base models are immutable and include created_at timestamp. Updateable fields are defined in separate Common models.
@@ -14,6 +13,7 @@ class UserCommon(SQLModel):
     email: Optional[str] = None
     full_name: Optional[str] = None
     is_active: bool = True
+    hashed_password: Optional[str] = None  # Password hash, required for auth
 
 class UserBase(UserCommon):
     created_at: datetime = Field(default_factory=datetime.utcnow)
@@ -118,3 +118,22 @@ class InventoryCommon(SQLModel):
 
 class InventoryBase(InventoryCommon):
     updated_at: datetime = Field(default_factory=datetime.utcnow)   
+
+
+# ===== AUTHENTICATION & AUTHORIZATION MODELS =====
+
+class PermissionCommon(SQLModel):
+    name: str  # e.g., "create_project", "delete_user", "view_inventory"
+    description: Optional[str] = None
+
+class PermissionBase(PermissionCommon):
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class RoleCommon(SQLModel):
+    name: str  # e.g., "Admin", "ProjectManager", "Viewer"
+    description: Optional[str] = None
+
+class RoleBase(RoleCommon):
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
