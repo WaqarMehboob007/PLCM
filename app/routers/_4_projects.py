@@ -32,7 +32,7 @@ def update_project(project_id: int, project: schemas.ProjectUpdate, session: Ses
     db_project = session.get(Project, project_id)
     if not db_project:
         raise HTTPException(status_code=404, detail="Project not found")
-    for k, v in project.dict(exclude_unset=True).items():
+    for k, v in project.model_dump(exclude_unset=True).items():
         setattr(db_project, k, v)
     session.add(db_project)
     session.commit()
